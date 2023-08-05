@@ -38,15 +38,25 @@ class sqliteModification():
             conn.commit()
         else:
             sqliteModification.checkPassword()
+    
     def checkPassword():
-        print("Username/password combo already exists. Login:")
+        print("Username/password combo already exists. Enter Y to login or N to create a new account")
+        answer = input()
+        if answer == "Y":
+            username = input("Username: ")
+            password = Conversion.Convert(input("Password: "))
+            if username == cursor.execute("SELECT username FROM users WHERE username = ?", (username,)).fetchone()[0]:
+                if password == cursor.execute("SELECT password FROM users WHERE username = ?", (username,)).fetchone()[0]:
+                    print("Login successful")
+                else:
+                    print("Password incorrect")
+        else:
+            sqliteModification.enterNewLogin()
+    def enterNewLogin():
         username = input("Username: ")
         password = Conversion.Convert(input("Password: "))
-        if username == cursor.execute("SELECT username FROM users WHERE username = ?", (username,)).fetchone()[0]:
-            if password == cursor.execute("SELECT password FROM users WHERE username = ?", (username,)).fetchone()[0]:
-                print("Login successful")
-            else:
-                print("Password incorrect")
+        cursor.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+        conn.commit()
 
               
 
